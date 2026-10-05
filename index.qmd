@@ -62,4 +62,4 @@ El proyecto sigue la metodología **CRISP-DM** y se entrega por fases.
 - Herrera Cuamatla Jennifer Jade 
 
 > Facultad de Ciencias, UNAM. Números de cuenta en el
-[README](https://github.com/fk2731/data-mining#integrantes) del repositorio.
+[README](https://github.com/Data-mining-gg/proyecto#integrantes) del repositorio.
