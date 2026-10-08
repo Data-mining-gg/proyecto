@@ -31,6 +31,20 @@ website:
             text: Uso de IA
           - href: entregas/E0_comprension_negocio/fuentes/referencias.qmd
             text: Fuentes citadas
+      - text: "E1 · Arquitectura del DW"
+        menu:
+          - href: entregas/E1_arquitectura_dw/index.qmd
+            text: Resumen de E1
+          - href: entregas/E1_arquitectura_dw/fuentes.qmd
+            text: Fuentes, catálogo e integración
+          - href: entregas/E1_arquitectura_dw/arquitectura.qmd
+            text: Arquitectura de 3 capas
+          - href: entregas/E1_arquitectura_dw/estrella.qmd
+            text: Esquema estrella
+          - href: entregas/E1_arquitectura_dw/trazabilidad.qmd
+            text: Matriz de trazabilidad
+          - href: entregas/E1_arquitectura_dw/uso_ia.qmd
+            text: Uso de IA
   page-footer:
     left: "Vega Navas · Cimmino Yáñez · Benítez Pérez · Herrera Cuamatla — Facultad de Ciencias, UNAM"
     right: "Almacenes y Minería de Datos · 2027-1"

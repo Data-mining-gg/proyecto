@@ -1,0 +1,39 @@
+---
+title: "E1 · Arquitectura del DW"
+subtitle: "Data Warehouse Architecture — Detección de fraude en transacciones fintech"
+---
+
+## Qué cubre esta entrega
+
+E1 es el inicio de la **fase 2 de CRISP-DM** (comprensión de los datos). A partir de las preguntas
+P1 a P4 de [E0](../E0_comprension_negocio/preguntas.qmd):
+
+1. buscamos, verificamos y catalogamos fuentes reales de transacciones con etiqueta de fraude;
+2. diseñamos un almacén de tres capas (staging, DW y DataMart) en BigQuery;
+3. definimos el hecho, su grano y un esquema estrella;
+4. ligamos cada dimensión y cada métrica a una pregunta de E0.
+
+## Decisiones principales
+
+| Decisión | Qué elegimos | Por qué |
+|---|---|---|
+| Fuentes del catálogo | PaySim (CSV), IEEE-CIS (CSV) y ULB (dataset público de BigQuery) | Las tres tienen transacciones con etiqueta de fraude, y así tenemos dos tipos de acceso. Las fuentes mexicanas (CONDUSEF, Banxico, ENIF) las revisamos, pero vienen agregadas |
+| Integración | Apilar las tres en una sola tabla de hechos con dimensiones compartidas | No tienen ningún identificador en común, son poblaciones distintas |
+| Grano | Una fila por transacción | P1 necesita señalar la transacción concreta, y es como vienen las tres fuentes |
+| Tiempo | `dim_fecha` relativa (día y hora) | Ninguna fuente trae fechas reales |
+| Cuenta que se perfila en P1 | La destino en PaySim y la tarjeta en IEEE-CIS | En PaySim solo el 0.15 % de las cuentas origen se repite (Visbeek et al., 2023) |
+| Pivote | No hubo | El objetivo de minería y el criterio de éxito de E0 no cambian |
+
+## Páginas
+
+| # | Entregable | Página |
+|---|---|---|
+| 1 | Búsqueda, catálogo e integración de fuentes | [fuentes.qmd](fuentes.qmd) |
+| 1 | Arquitectura de 3 capas, evidencia en BigQuery y consultas del mart | [arquitectura.qmd](arquitectura.qmd) |
+| 2 | Esquema estrella: grano, dimensiones, diagrama y DDL | [estrella.qmd](estrella.qmd) |
+| 3 | Matriz de trazabilidad | [trazabilidad.qmd](trazabilidad.qmd) |
+| 4 | Página de pivote | No aplica (ver [trazabilidad](trazabilidad.qmd#hubo-pivote)) |
+| 5 | Uso de IA | [uso_ia.qmd](uso_ia.qmd) |
+
+El SQL de los datasets, staging y las vistas del mart, junto con el script de muestreo, está en
+[Arquitectura](arquitectura.qmd); el DDL del DW está en [Esquema estrella](estrella.qmd).

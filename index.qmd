@@ -21,14 +21,22 @@ El proyecto sigue la metodología **CRISP-DM** y se entrega por fases.
 
 | # | Fase | Estado |
 |---|------|--------|
-| 1 | Comprensión del negocio | **En curso — Entrega E0** |
-| 2 | Comprensión de los datos | Pendiente |
+| 1 | Comprensión del negocio | Cubierta — Entrega E0 |
+| 2 | Comprensión de los datos | **En curso — Entrega E1** (fuentes y arquitectura del DW) |
 | 3 | Preparación de los datos | Pendiente |
 | 4 | Modelado | Pendiente |
 | 5 | Evaluación | Pendiente |
 | 6 | Despliegue | Reporte y presentación final |
 
-## Entrega actual
+## Entregas
+
+### [E1 · Arquitectura del DW](entregas/E1_arquitectura_dw/index.qmd)
+
+- [Fuentes: búsqueda, catálogo e integración](entregas/E1_arquitectura_dw/fuentes.qmd)
+- [Arquitectura de tres capas en BigQuery](entregas/E1_arquitectura_dw/arquitectura.qmd)
+- [Esquema estrella](entregas/E1_arquitectura_dw/estrella.qmd)
+- [Matriz de trazabilidad](entregas/E1_arquitectura_dw/trazabilidad.qmd)
+- [Documentación de uso de herramientas de IA](entregas/E1_arquitectura_dw/uso_ia.qmd)
 
 ### [E0 · Comprensión del Negocio](entregas/E0_comprension_negocio/index.qmd)
 
@@ -41,6 +49,10 @@ El proyecto sigue la metodología **CRISP-DM** y se entrega por fases.
 - [Fuentes citadas](entregas/E0_comprension_negocio/fuentes/referencias.qmd)
 
 ## Fuentes de datos previstas
+
+> En E1 se agregó una tercera fuente de modelado, **ULB Credit Card Fraud** (dataset público de
+> BigQuery, datos reales de tarjetas europeas). El catálogo verificado está en
+> [E1 · Fuentes](entregas/E1_arquitectura_dw/fuentes.qmd).
 
 | Fuente | Contenido | Por qué se usa |
 |---|---|---|

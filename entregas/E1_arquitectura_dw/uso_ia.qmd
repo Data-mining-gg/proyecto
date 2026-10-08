@@ -1,0 +1,78 @@
+---
+title: "Documentación de uso de herramientas de IA"
+subtitle: "E1 · Arquitectura del DW"
+---
+
+En esta entrega usamos **Claude** (modelo Claude Opus 5.5, en Claude Code, con búsqueda web y acceso
+al repositorio). Abajo está cada uso por tarea, con lo que hizo la IA y lo que decidimos nosotros.
+No guardamos el texto original de los prompts, así que los que aparecen aquí son
+**reconstrucciones** hechas a partir de las conversaciones: reflejan lo que pedimos, pero no son
+copia literal. Todo el SQL se corre en nuestro proyecto de BigQuery, al que la herramienta no tiene
+acceso.
+
+## Uso 1. Buscar y verificar fuentes de datos
+
+| Campo | Detalle |
+|---|---|
+| Herramienta | Claude Opus 5.5 con búsqueda web, más la API pública de Kaggle y la API de datos.gob.mx |
+| Fecha | 5 de octubre de 2026 |
+| Tarea | Encontrar una tercera fuente de transacciones con fraude que fuera real y de un tipo de acceso distinto, evaluar fuentes mexicanas y confirmar los datos de cada candidata |
+| Rol de la IA | Buscar candidatas y verificar URL, licencia, grano y cobertura de cada una |
+| Rol del equipo | Elegir la fuente (ULB en BigQuery), descartar las demás por su grano y decidir cómo integrar las tres fuentes |
+
+**Prompt (reconstruido)**
+
+> Necesitamos una tercera fuente de transacciones con etiqueta de fraude que sea real y que no venga
+> de Kaggle. Busca primero en los datasets públicos de BigQuery y en portales mexicanos
+> (datos.gob.mx, CONDUSEF, Banxico, INEGI). Para cada candidata confirma que la URL existe y dinos
+> licencia, grano y cobertura. Aprovecha para verificar también los datos que ya tenemos de PaySim e
+> IEEE-CIS. No elijas tú: danos la lista y nosotros decidimos.
+
+**Qué se verificó y cómo:**
+
+| Fuente o dato | Cómo se verificó | Resultado |
+|---|---|---|
+| PaySim: dueño, licencia, tamaño, columnas | API de metadatos de Kaggle (`/api/v1/datasets/view/ealaxi/paysim1`) | Correcto: Edgar Lopez-Rojas, CC BY-SA 4.0, 493,534,783 bytes. Además ahí apareció la advertencia del autor sobre las columnas de saldo, que no teníamos en E0 |
+| ULB en `bigquery-public-data.ml_datasets.ulb_fraud_detection` | Codelab oficial de Google Cloud que usa la tabla, y metadatos del espejo en Kaggle | Existe: 284,807 transacciones, 492 fraudes, licencia ODbL |
+| IEEE-CIS: archivos y llaves | Búsqueda web (la API de Kaggle para competencias pide iniciar sesión) | `train_transaction` y `train_identity` se unen por `TransactionID`; 590,540 filas |
+| "Solo el 0.15 % de las cuentas origen de PaySim se repite" | Se descargó el artículo (arXiv:2312.00586) y se encontró la frase exacta | Correcto, Visbeek et al. (2023). Lo vamos a revisar también con nuestra muestra en staging |
+| Conjuntos de CONDUSEF en datos.gob.mx | API de datos.gob.mx (`package_search`, `package_show`) | Existen (CC BY 4.0) y son anuales por institución. La descarga del CSV marcó *Access Denied* desde la herramienta, así que solo se revisaron sus metadatos. Se descartaron por el grano |
+| Banxico SIE API | Búsqueda web y la URL oficial responde | Existe y pide token. Se descartó porque son series agregadas sin fraude |
+| BAF (NeurIPS 2022) | API de metadatos de Kaggle | Existe (CC BY-NC-SA 4.0), pero es de solicitudes de cuenta, no de transacciones. Se descartó |
+| ENIF 2024 (INEGI) | Boletín de INEGI | Existe, pero es una encuesta por persona. Se descartó por el grano |
+
+**Qué hicimos con la salida:** elegimos ULB como tercera fuente porque es real y se consulta directo
+en BigQuery. Al principio pensábamos unir las fuentes por alguna llave en común; al confirmar que no
+comparten ningún identificador, decidimos apilarlas en una sola tabla de hechos con dimensiones
+compartidas. El dato de las cuentas origen de PaySim nos hizo ajustar P1 (ver
+[trazabilidad](trazabilidad.qmd)).
+
+## Uso 2. Diseño del DW y SQL
+
+| Campo | Detalle |
+|---|---|
+| Herramienta | Claude Opus 5.5 (Claude Code) |
+| Fecha | 5 y 8 de octubre de 2026 |
+| Tarea | Proponer granos candidatos, revisar el esquema estrella con su SCD, escribir el DDL, una vista por pregunta con OLAP y un script de muestreo de menos de 100 MB. Después, hacer el diagrama de arquitectura en Excalidraw, mejorar el diagrama Mermaid de la estrella y simplificar la redacción y los comentarios del SQL |
+| Rol de la IA | Proponer opciones de grano con sus ventajas y desventajas, escribir el SQL y el script, y hacer los diagramas en archivos editables |
+| Rol del equipo | Elegir el grano y las dimensiones, revisar el SQL, exportar los diagramas y decidir cuáles se quedaban en la entrega |
+
+**Prompt**
+
+> Con las tres fuentes que ya elegimos y las preguntas de E0, propón 2 o 3 granos posibles y dinos
+> qué gana y qué pierde cada uno. Con el que elijamos, arma una estrella de 3 a 5 dimensiones que
+> incluya `dim_fecha`, y escribe el DDL y una vista por pregunta en dialecto de BigQuery. Para las
+> muestras, haz un script que muestree por cuenta y no por fila, para no romper el historial que
+> necesita P1.
+
+**Cómo se revisó y qué hicimos con la salida:** el SQL pasó por `sqlglot` (dialecto BigQuery) para
+revisar la sintaxis; la validación final es la del editor de BigQuery. El script de muestreo se
+probó con CSV de prueba que tienen las mismas columnas. De los granos propuestos nos quedamos con
+una fila por transacción (ver [estrella](estrella.qmd)).
+
+## Registro de revisión del equipo
+
+| Interacción | Quién validó / decidió | Cambios respecto a la salida de la IA | Fecha |
+|---|---|---|---|
+| Uso 1. Fuentes | Equipo | Elegimos ULB entre las candidatas, descartamos las mexicanas por su grano, decidimos apilar las fuentes en vez de unirlas y ajustamos P1 por el dato de las cuentas origen | 5 de octubre de 2026 |
+| Uso 2. Diseño | Equipo | Elegimos el grano de una fila por transacción, revisamos el SQL con `sqlglot` y BigQuery | 5 y 8 de octubre de 2026 |

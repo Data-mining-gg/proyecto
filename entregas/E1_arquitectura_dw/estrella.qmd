@@ -1,0 +1,134 @@
+---
+title: "Esquema estrella"
+subtitle: "E1 · Arquitectura del DW"
+---
+
+## 1. Hecho y grano
+
+### Granos que consideramos
+
+| # | Grano | De dónde sale | Qué preguntas deja contestar | Qué se pierde |
+|---|---|---|---|---|
+| G1 | Una fila por transacción | Las tres fuentes vienen así | P1 (saber qué transacción se sale del historial de su cuenta), P2, P3 (costo por el monto de cada caso) y P4 | Nada, es lo más fino que tienen los datos |
+| G2 | Una fila por cuenta por día | PaySim (`nameDest`) e IEEE-CIS (aproximación por tarjeta) | P4 y una parte de P1 | ULB se queda fuera porque no tiene cuenta. P1 ya solo diría qué día fue raro, no qué transacción. P3 pierde el monto de cada caso |
+| G3 | Una fila por fuente, tipo de transacción y hora | Las tres fuentes | P2 y P4 en agregado | P1 completa, porque desaparece la cuenta |
+
+### Grano elegido
+
+> **Una fila por transacción, de cualquiera de las tres fuentes.**
+
+P1 es la pregunta central de E0, y lo que pide es señalar qué transacción se sale del historial de
+su cuenta. Con G2 o G3 esa transacción ya no existe en la tabla. Además, las tres fuentes ya vienen a
+nivel transacción, así que G1 es lo que los datos nos dan sin tener que agregar nada. Lo que daría
+G2 (el perfil de cada cuenta) no se pierde: lo guardamos como atributos de `dim_cuenta`.
+
+Lo que este grano no resuelve:
+
+- Solo hay historial de cuenta en PaySim (por cuenta destino) y en IEEE-CIS (aproximado por tarjeta).
+  Las filas de ULB entran con cuenta desconocida y no sirven para P1.
+- Como no hay fechas reales, P4 se mide en semanas relativas dentro de cada fuente.
+
+No hubo que pivotar: el objetivo de minería y el criterio de éxito de E0 siguen igual (ver la
+[matriz de trazabilidad](trazabilidad.qmd)).
+
+## 2. Tabla de hechos: `hechos_transaccion`
+
+| Medida | Tipo | ¿Aditiva? | Nota |
+|---|---|---|---|
+| `num_transacciones` | INT64 (siempre 1) | Sí | Para contar en cualquier corte |
+| `monto` | FLOAT64 | Semiaditiva: se suma dentro de una fuente, no entre fuentes | Cada fuente tiene su moneda |
+| `es_fraude` | INT64 (0/1) | Sí | La suma da el número de fraudes y el promedio da la tasa |
+| `es_marcada_por_regla` | INT64 (0/1 o NULL) | Sí | La regla fija de PaySim (`isFlaggedFraud`), contra la que se compara en P3 |
+| `saldo_origen_antes`, `saldo_origen_despues` | FLOAT64 | No (son saldos en un momento) | Solo PaySim y solo para revisar. No se usan para modelar porque filtran la respuesta |
+
+`id_transaccion_origen` es una dimensión degenerada: sirve para regresar al registro original en
+staging.
+
+## 3. Dimensiones
+
+| Dimensión | Llave sustituta | Atributos principales | SCD | Por qué |
+|---|---|---|---|---|
+| `dim_fecha` | `fecha_key` = día × 100 + hora | `dia_relativo`, `hora_del_dia`, `hora_absoluta`, `semana_relativa`, `franja_horaria`, `es_nocturna` | Tipo 0 | Un día y hora relativos siempre significan lo mismo, nunca cambian |
+| `dim_tipo_transaccion` | `tipo_key` | `codigo_original`, `categoria_conformada`, `canal`, `fuente_key` | Tipo 1 | Si corregimos cómo se mapea un código (por ejemplo los `ProductCD` de IEEE-CIS, que son supuestos), se sobrescribe. No nos interesa guardar el mapeo equivocado |
+| `dim_cuenta` (dos roles: origen y destino) | `cuenta_key`, una por versión | `id_cuenta_natural`, `tipo_cuenta`, `primer_dia_actividad`, `perfil_num_transacciones`, `perfil_monto_medio`, `perfil_monto_desv`, `perfil_monto_max`, `valido_desde_dia`, `valido_hasta_dia`, `es_version_actual` | Tipo 2 | El perfil normal de una cuenta cambia con el tiempo, y eso es justo lo que mide P4. Cada transacción se tiene que comparar con el perfil que la cuenta tenía en ese momento, no con el de hoy. Si sobrescribiéramos (tipo 1) perderíamos ese cambio |
+| `dim_fuente` | `fuente_key` | `nombre_fuente`, `propietario`, `url_origen`, `licencia`, `es_sintetica`, `moneda`, `dominio`, `fecha_carga` | Tipo 1 | Son datos administrativos. Si cambia la licencia o la fecha de carga, solo importa el valor actual |
+
+Son cuatro dimensiones. `dim_cuenta` aparece dos veces en el diagrama porque la usamos con dos
+roles (origen y destino), pero es una sola tabla. La fila con `cuenta_key = 0` es la cuenta
+desconocida: ahí caen todas las transacciones de ULB y el destino de las de IEEE-CIS.
+
+## 4. Diagrama
+
+```{mermaid}
+%%{init: {"theme": "neutral"}}%%
+erDiagram
+    DIM_FECHA ||--o{ HECHOS : "fecha_key"
+    DIM_TIPO ||--o{ HECHOS : "tipo_key"
+    DIM_CUENTA ||--o{ HECHOS : "cuenta_origen_key"
+    DIM_CUENTA ||--o{ HECHOS : "cuenta_destino_key"
+    DIM_FUENTE ||--o{ HECHOS : "fuente_key"
+    DIM_FUENTE ||--o{ DIM_TIPO : "fuente_key"
+    DIM_FUENTE ||--o{ DIM_CUENTA : "fuente_key"
+
+    HECHOS["hechos_transaccion"] {
+        STRING id_transaccion_origen PK "degenerada"
+        INT64 fuente_key PK, FK
+        INT64 fecha_key FK
+        INT64 tipo_key FK
+        INT64 cuenta_origen_key FK "0 = desconocida"
+        INT64 cuenta_destino_key FK "0 = desconocida"
+        INT64 num_transacciones "aditiva"
+        FLOAT64 monto "semiaditiva"
+        INT64 es_fraude "aditiva"
+        INT64 es_marcada_por_regla "aditiva"
+        FLOAT64 saldo_origen_antes "no aditiva"
+        FLOAT64 saldo_origen_despues "no aditiva"
+    }
+    DIM_FECHA["dim_fecha (SCD 0)"] {
+        INT64 fecha_key PK "dia*100 + hora"
+        INT64 dia_relativo
+        INT64 hora_del_dia
+        INT64 hora_absoluta
+        INT64 semana_relativa
+        STRING franja_horaria
+        BOOL es_nocturna
+    }
+    DIM_TIPO["dim_tipo_transaccion (SCD 1)"] {
+        INT64 tipo_key PK
+        INT64 fuente_key FK
+        STRING codigo_original
+        STRING categoria_conformada
+        STRING canal
+    }
+    DIM_CUENTA["dim_cuenta (SCD 2)"] {
+        INT64 cuenta_key PK "una por version"
+        INT64 fuente_key FK
+        STRING id_cuenta_natural
+        STRING tipo_cuenta
+        INT64 primer_dia_actividad
+        INT64 perfil_num_transacciones
+        FLOAT64 perfil_monto_medio
+        FLOAT64 perfil_monto_desv
+        FLOAT64 perfil_monto_max
+        INT64 valido_desde_dia
+        INT64 valido_hasta_dia
+        BOOL es_version_actual
+    }
+    DIM_FUENTE["dim_fuente (SCD 1)"] {
+        INT64 fuente_key PK
+        STRING nombre_fuente
+        STRING propietario
+        STRING url_origen
+        STRING licencia
+        BOOL es_sintetica
+        STRING moneda
+        STRING dominio
+        DATE fecha_carga
+    }
+```
+
+## 5. DDL ejecutado en BigQuery
+
+```sql
+{{< include sql/ddl_dw.sql >}}
+```
