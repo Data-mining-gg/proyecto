@@ -35,10 +35,16 @@ un mal desempeño en los montos que realmente le cuestan dinero al negocio.
 | Objetivo de negocio | Métrica técnica | Umbral propuesto |
 |---|---|---|
 | Automatizar el bloqueo de la mayoría del fraude | **Recall ponderado por monto** en el nivel de alta confianza | ≥ 0.70 |
-| No dañar la experiencia de clientes legítimos | **Precisión** en el nivel de alta confianza | ≥ 0.995 |
+| No dañar la experiencia de clientes legítimos |  **(FPR)** sobre transacciones legítimas en alta confianza |< 0.5% (<0.0005)
 | No saturar al equipo de revisión humana | Proporción de transacciones en nivel de **confianza media** | ≤ 3% del volumen |
 | Que la "confianza" sea confiable y no solo un número | **Error de calibración esperado (ECE)** / Brier score | Por debajo del umbral definido en fase 3, y mejor que un score sin calibrar |
-| Aportar valor sobre lo que ya existe | Comparación contra la **línea base de reglas fijas** (umbral de monto/hora) | Mejora en recall ponderado y en precisión simultáneamente |
+| Aportar valor sobre lo que ya existe | Comparación contra la **línea base de reglas fijas** (umbral de monto/hora) | Mejora en recall ponderado y en FPR simultáneamente |
+
+## Justificación de umbrales elegidos.
+
+- **70% del monto:**Busca capturar la gran mayoría del impacto financiero sin exigir un modelo perfecto que asume  exponencialmente los falsos positivos.
+- **<0.5% de falsos positivos:** Este garantiza que menos de 5 de cada 1,000 clientes legítimos sufran un bloqueo indebido, protegiendo la experiencia de usuario.
+-**<= 3% a revisión humana:** Es el límite de capacidad operativa de los analistas para no saturar el área de prevención de fraude.
 
 ## Línea base y medición
 

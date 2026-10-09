@@ -9,7 +9,7 @@ subtitle: "E0 · Comprensión del Negocio"
 |---|---|---|
 | S1 | Las regularidades estadísticas de PaySim (aunque sintético) se parecen lo suficiente a las de transacciones reales como para aprender patrones de comportamiento por cuenta. | El modelo aprendería artefactos de la simulación, no de fraude real. |
 | S2 | Las etiquetas de fraude de PaySim e IEEE-CIS son confiables. | Los umbrales de éxito (recall, precisión) estarían mal calibrados desde el inicio. |
-| S3 | El comportamiento "normal" de una cuenta es razonablemente estable en ventanas cortas (semanas). | La premisa central del proyecto —comparar contra el historial propio— pierde sentido. |
+| S3 | El comportamiento "normal" de una cuenta es razonablemente estable en ventanas cortas (semanas). | No se podría construir un perfil histórico de la cuenta en el periodo de entrenamiento para evaluar sus transacciones futuras en prueba. |
 | S4 | Es operativamente viable automatizar decisiones con un umbral de confianza (en vez de solo reglas o solo revisión humana). | El criterio de éxito de negocio (70% del monto en alta confianza) no sería adoptable aunque el modelo funcione bien. |
 | S5 | Los datasets seguirán disponibles públicamente en Kaggle, con su licencia actual, durante el semestre. | Habría que congelar una copia local desde el inicio del proyecto. |
 | S6 | Un modelo entrenado con datos de e-commerce de EE. UU. (IEEE-CIS) puede usarse como validación cruzada de señales, aunque el contexto de negocio (fintech LatAm) sea distinto. | La validación cruzada perdería sentido y quedaría solo PaySim, sin contraste con datos reales. |
@@ -81,9 +81,7 @@ Fintech y reportable a la UIF, algo que un proyecto de curso no puede satisfacer
 Si transacciones de una misma cuenta quedan repartidas entre entrenamiento y prueba, el modelo puede
 "memorizar" el comportamiento de esa cuenta específica en vez de aprender un criterio generalizable.
 
-- **Mitigación:** partición estrictamente temporal y, cuando sea posible, verificar que las cuentas de
-  prueba no se solapen indebidamente con las de entrenamiento; revisión cruzada del pipeline entre
-  integrantes del equipo.
+- **Mitigación:** usar una **partición por ventana de tiempo**: se entrena con el primer periodo de tiempo para construir el historial de las cuentas y se evalúa en el periodo posterior sobre las mismas cuentas. Así se evita predecir el futuro con datos del pasado (fuga temporal) mientras se conserva el historial necesario de cada cuenta.
 
 ## Resumen de exposición
 
