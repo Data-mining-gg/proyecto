@@ -21,7 +21,7 @@ P1 a P4 de [E0](../E0_comprension_negocio/preguntas.qmd):
 | Integración | Apilar las tres en una sola tabla de hechos con dimensiones compartidas | No tienen ningún identificador en común, son poblaciones distintas |
 | Grano | Una fila por transacción | P1 necesita señalar la transacción concreta, y es como vienen las tres fuentes |
 | Tiempo | `dim_fecha` relativa (día y hora) | Ninguna fuente trae fechas reales |
-| Cuenta que se perfila en P1 | La destino en PaySim y la tarjeta en IEEE-CIS | En PaySim solo el 0.15 % de las cuentas origen se repite (Visbeek et al., 2023) |
+| Cuenta que se perfila en P1 | La destino en PaySim y la tarjeta en IEEE-CIS | En PaySim solo el 0.016 % de las cuentas origen se repite |
 | Pivote | No hubo | El objetivo de minería y el criterio de éxito de E0 no cambian |
 
 ## Páginas

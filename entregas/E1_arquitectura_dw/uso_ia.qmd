@@ -35,7 +35,6 @@ acceso.
 | PaySim: dueño, licencia, tamaño, columnas | API de metadatos de Kaggle (`/api/v1/datasets/view/ealaxi/paysim1`) | Correcto: Edgar Lopez-Rojas, CC BY-SA 4.0, 493,534,783 bytes. Además ahí apareció la advertencia del autor sobre las columnas de saldo, que no teníamos en E0 |
 | ULB en `bigquery-public-data.ml_datasets.ulb_fraud_detection` | Codelab oficial de Google Cloud que usa la tabla, y metadatos del espejo en Kaggle | Existe: 284,807 transacciones, 492 fraudes, licencia ODbL |
 | IEEE-CIS: archivos y llaves | Búsqueda web (la API de Kaggle para competencias pide iniciar sesión) | `train_transaction` y `train_identity` se unen por `TransactionID`; 590,540 filas |
-| "Solo el 0.15 % de las cuentas origen de PaySim se repite" | Se descargó el artículo (arXiv:2312.00586) y se encontró la frase exacta | Correcto, Visbeek et al. (2023). Lo vamos a revisar también con nuestra muestra en staging |
 | Conjuntos de CONDUSEF en datos.gob.mx | API de datos.gob.mx (`package_search`, `package_show`) | Existen (CC BY 4.0) y son anuales por institución. La descarga del CSV marcó *Access Denied* desde la herramienta, así que solo se revisaron sus metadatos. Se descartaron por el grano |
 | Banxico SIE API | Búsqueda web y la URL oficial responde | Existe y pide token. Se descartó porque son series agregadas sin fraude |
 | BAF (NeurIPS 2022) | API de metadatos de Kaggle | Existe (CC BY-NC-SA 4.0), pero es de solicitudes de cuenta, no de transacciones. Se descartó |

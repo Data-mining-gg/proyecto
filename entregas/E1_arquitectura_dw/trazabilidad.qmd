@@ -19,10 +19,10 @@ Revisamos la matriz en los dos sentidos:
 
 ### Notas
 
-1. **Por qué ajustamos P1.** Visbeek et al. (2023) reportan que en PaySim solo el 0.15 % de las
+1. **Por qué ajustamos P1.** Nosotros al reportamos que en PaySim solo el 0.016% de las
    cuentas origen tiene más de una transacción. En E0 entendíamos "historial de cada cuenta" como la
    cuenta que paga, pero así casi ninguna cuenta tendría historial. Por eso en PaySim perfilamos la
-   cuenta destino, donde el 83 % sí se repite. Eso además coincide con cómo funciona el fraude en el
+   cuenta destino, donde el 16.9 % sí se repite. Eso además coincide con cómo funciona el fraude en el
    simulador: vacían una cuenta con un TRANSFER a otra y después hacen CASH_OUT. En IEEE-CIS
    perfilamos la tarjeta, usando la aproximación `card1` + `addr1`.
    Esto no cambia el objetivo: sigue siendo encontrar anomalías contra el historial propio de una
@@ -41,6 +41,10 @@ Revisamos la matriz en los dos sentidos:
    unos 6 meses en IEEE-CIS y 2 días en ULB, que por eso no se usa. El cambio en el tiempo lo medimos
    en semanas relativas dentro de cada fuente, no en temporadas reales. En IEEE-CIS, qué tan estable
    se ve un perfil también depende de qué tan buena sea la aproximación de tarjeta.
+   
+### Fuentes de lo reportado en PaySim
+
+![Reportado paysim](img/reportado_paysim.png)
 
 ## De cada elemento del esquema a la pregunta
 
