@@ -48,12 +48,12 @@ P1. El script copia las filas tal cual, sin cambiar ningún valor.
 ```
 :::
 
-| Tabla de staging | Fuente | Se muestrea por | Cómo se cargó |
-|---|---|---|---|
-| `paysim_muestra` | F1 PaySim | `nameDest` (cuenta destino) | Subida de CSV con esquema automático |
-| `ieee_transaction_muestra` | F2 IEEE-CIS | `card1` (tarjeta) | Subida de CSV con esquema automático |
-| `ieee_identity_muestra` | F2 IEEE-CIS | Los `TransactionID` de la tabla anterior | Subida de CSV con esquema automático |
-| `ulb_creditcard` | F3 ULB | No se muestrea (~285 mil filas) | `CREATE TABLE AS SELECT` desde el dataset público |
+| Tabla de staging | Fuente | Se muestrea por | Cómo se cargó | Fecha de carga |
+|---|---|---|---|---|
+| `paysim_muestra` | F1 PaySim | `nameDest` (cuenta destino) | Subida de CSV con esquema automático | 9 de octubre de 2026 |
+| `ieee_transaction_muestra` | F2 IEEE-CIS | `card1` (tarjeta) | Subida de CSV con esquema automático | 9 de octubre de 2026 |
+| `ieee_identity_muestra` | F2 IEEE-CIS | Los `TransactionID` de la tabla anterior | Subida de CSV con esquema automático | 9 de octubre de 2026 |
+| `ulb_creditcard` | F3 ULB | No se muestrea (~285 mil filas) | `CREATE TABLE AS SELECT` desde el dataset público | 9 de octubre de 2026 |
 
 ```sql
 {{< include sql/01_staging.sql >}}
