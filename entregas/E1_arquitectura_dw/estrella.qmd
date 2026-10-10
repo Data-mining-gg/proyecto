@@ -132,3 +132,11 @@ erDiagram
 ```sql
 {{< include sql/ddl_dw.sql >}}
 ```
+
+### Esquemas de las tablas creadas
+
+![hechos_transaccion](img/dw_hechos_transaccion.png)
+![dim_fecha](img/dw_dim_fecha.png)
+![dim_tipo_transaccion](img/dw_dim_tipo_transaccion.png)
+![dim_cuenta](img/dw_dim_cuenta.png)
+![dim_fuente](img/dw_dim_fuente.png)

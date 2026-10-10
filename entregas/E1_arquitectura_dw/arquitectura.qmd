@@ -23,6 +23,13 @@ copiarla.
 {{< include sql/00_datasets.sql >}}
 ```
 
+![Dataset staging en BigQuery, con ubicación US](img/bq_dataset_staging.png)
+
+![Dataset Mart en BigQuery, con ubicación US](img/bq_dataset_mart.png)
+
+![Dataset DW en BigQuery, con ubicación US](img/bq_dataset_dw.png)
+
+
 ## Capa staging
 
 ### Por qué una muestra y cómo la sacamos
@@ -52,6 +59,28 @@ P1. El script copia las filas tal cual, sin cambiar ningún valor.
 {{< include sql/01_staging.sql >}}
 ```
 
+### Evidencia de carga
+
+#### paysim_muestra
+![Carga de paysim_muestra](img/stg_paysim_muestra_carga.png)
+![Esquema de paysim_muestra](img/stg_paysim_muestra_esquema.png)
+![Vista previa de paysim_muestra](img/stg_paysim_muestra_preview.png)
+
+#### ieee_transaction_muestra
+![Carga de ieee_transaction_muestra](img/stg_ieee_transaction_muestra_carga.png)
+![Esquema de ieee_transaction_muestra](img/stg_ieee_transaction_muestra_esquema.png)
+![Vista previa de ieee_transaction_muestra](img/stg_ieee_transaction_muestra_preview.png)
+
+#### ieee_identity_muestra
+![Carga de ieee_identity_muestra](img/stg_ieee_identity_muestra_carga.png)
+![Esquema de ieee_identity_muestra](img/stg_ieee_identity_muestra_esquema.png)
+![Vista previa de ieee_identity_muestra](img/stg_ieee_identity_muestra_preview.png)
+
+#### ulb_creditcard
+![Carga de ulb_creditcard](img/stg_ulb_creditcard_carga.png)
+![Esquema de ulb_creditcard](img/stg_ulb_creditcard_esquema.png)
+![Vista previa de ulb_creditcard](img/stg_ulb_creditcard_preview.png)
+
 ## Capa DW
 
 El DDL de las tablas y por qué elegimos cada una están en
@@ -73,3 +102,8 @@ BigQuery las acepta como consultas válidas.
 ```sql
 {{< include sql/consultas_mart.sql >}}
 ```
+
+![Consulta de P1 válida en el editor](img/mart_p1.png)
+![Consulta de P2 válida en el editor](img/mart_p2.png)
+![Consulta de P3 válida en el editor](img/mart_p3.png)
+![Consulta de P4 válida en el editor](img/mart_p4.png)

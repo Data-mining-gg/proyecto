@@ -60,6 +60,12 @@ sintéticos y no aportan algo que PaySim no tenga.
 | Llaves de integración | `step` a `dim_fecha`, `type` a `dim_tipo_transaccion`, `nameOrig` y `nameDest` a `dim_cuenta` |
 | Preguntas de E0 | P1, P3 (es la única fuente con una regla fija, `isFlaggedFraud`, que sirve de comparación) y P4 |
 
+**Evidencia de verificación**
+
+![Página de PaySim en Kaggle](img/f1_paysim_pagina.png)
+
+![Vista previa de los datos de PaySim](img/f1_paysim_preview.png)
+
 ### F2. IEEE-CIS Fraud Detection
 
 | Campo | Valor |
@@ -73,6 +79,12 @@ sintéticos y no aportan algo que PaySim no tenga.
 | Llaves de integración | `TransactionDT` a `dim_fecha`, `ProductCD` a `dim_tipo_transaccion`, y `card1` + `addr1` como aproximación de cuenta en `dim_cuenta` |
 | Preguntas de E0 | P1 (historial por tarjeta), P2 (etiquetas reales), P3 y P4 |
 
+**Evidencia de verificación**
+
+![Página de la competencia IEEE-CIS en Kaggle](img/f2_ieee_pagina.png)
+
+![Vista previa de train_transaction.csv](img/f2_ieee_preview.png)
+
 ### F3. ULB Credit Card Fraud (BigQuery público)
 
 | Campo | Valor |
@@ -85,6 +97,12 @@ sintéticos y no aportan algo que PaySim no tenga.
 | Licencia y restricciones | ODbL para la base y Database Contents License para el contenido. Las variables `V1` a `V28` vienen de un PCA por confidencialidad, así que no se pueden interpretar ni comparar con otras fuentes |
 | Llaves de integración | `Time` a `dim_fecha` y el valor fijo `TARJETA` a `dim_tipo_transaccion`. No tiene cuenta, así que entra como cuenta desconocida en `dim_cuenta` |
 | Preguntas de E0 | P2 (segunda fuente real) y P3 (`Amount` para calcular costo por monto) |
+
+**Evidencia de verificación**
+
+![Página de ULB Credit Card Fraud en Kaggle](img/f3_ulb_kaggle_pagina.png)
+
+![Vista previa de la tabla pública de ULB en BigQuery](img/f3_ulb_bigquery_preview.png)
 
 ## 4. Análisis de integración
 
