@@ -1,5 +1,7 @@
 # Proyecto Integrador — Almacenes y Minería de Datos
 
+**Sitio publicado:** <https://data-mining-gg.github.io/proyecto/>
+
 ## Tema
 
 **Detección de fraude y estimación de confianza en transacciones fintech.**
