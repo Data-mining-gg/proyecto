@@ -21,7 +21,7 @@ subtitle: "E0 · CRISP-DM — Detección de fraude en transacciones fintech"
     <h3>1 · Objetivo de negocio</h3>
     <p>Que el área de prevención de fraude de una fintech de pagos digitales <b>reduzca sus pérdidas
     por fraude</b> detectando transacciones que se apartan del <b>comportamiento habitual de cada
-    cuenta</b> —no de una regla genérica—, y decida con qué confianza actuar: bloquear
+    cuenta</b> —no de una regla genérica— sino que decida con qué confianza actuar: bloquear
     automáticamente, mandar a revisión humana, o dejar pasar.</p>
     <ul>
       <li><b>Dolor:</b> las reglas fijas actuales son iguales para todas las cuentas y no distinguen
@@ -107,7 +107,7 @@ subtitle: "E0 · CRISP-DM — Detección de fraude en transacciones fintech"
     <h3>5 · Éxito técnico</h3>
     <ul>
       <li><b>Detección:</b> recall ponderado por monto ≥ 0.70 en el nivel de alta confianza;
-      precisión ≥ 99.5% en ese mismo nivel.</li>
+      Tasa de Falsos Positivos (FPR) < 0.5% sobre el conjunto de transacciones legítimas en ese nivel.</li>
       <li><b>Calibración:</b> error de calibración esperado (ECE) bajo un umbral definido en fase 3;
       Brier score menor al de una línea base sin calibrar.</li>
       <li><b>Comparación:</b> superar a la línea base de reglas fijas (umbral de monto/hora) tanto en
@@ -136,6 +136,7 @@ subtitle: "E0 · CRISP-DM — Detección de fraude en transacciones fintech"
 </div>
 ```
 
+<div style="margin-top: 2.5rem; page-break-before: always;">
 ## Comprensión de negocio desde apartado técnico
 
 | Bloque de negocio (1–2) | Bloque técnico (4–5) |
@@ -143,4 +144,4 @@ subtitle: "E0 · CRISP-DM — Detección de fraude en transacciones fintech"
 | "Detectar desviaciones del comportamiento habitual de cada cuenta" | Tarea A+B (perfil por cuenta + score de anomalía) |
 | "Decidir con qué confianza actuar" | Tarea C (calibración) con ECE bajo umbral |
 | "≥70% del monto fraudulento en alta confianza" | Recall ponderado por monto ≥ 0.70 en ese nivel |
-| "Falsos positivos &lt;0.5% en alta confianza" | Precisión ≥ 99.5% en el nivel de alta confianza |
+| "Falsos positivos &lt;< 0.5% en alta confianza" | FPR (Rating de Falsos Positivos) < 0.5% de legítimas etiquetadas como alta confianza |

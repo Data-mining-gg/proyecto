@@ -34,6 +34,8 @@ afirma.
 - **Por qué segundo:** IEEE-CIS tiene etiquetas de fraude reales (no simuladas); sirve para comprobar
   si las señales de anomalía que encontremos en PaySim generalizan a datos reales, aunque de otro
   contexto (e-commerce de EE. UU., no fintech LatAm).
+- **Justificación:** No pasamos las variables de un dataset a otro porque son distintas. Lo que probamos es que la 
+  metodología funciona en ambos. Aunque cambie el contexto (celular vs. compras en línea), un fraude se nota igual: montos raros y cambios de comportamiento. Usar IEEE-CIS confirma que nuestra idea sirve con fraude real y no solo con los datos simulados de PaySim.
 - **Tarea de minería:** clasificación supervisada con manejo de desbalance (pesos de clase,
   submuestreo/sobremuestreo), evaluada con PR-AUC y recall, no con exactitud.
 - **Variables candidatas:** monto de transacción, variables C1–C14 (conteos), D1–D15 (deltas de
@@ -70,6 +72,6 @@ afirma.
 | Pregunta | Tarea de minería | Bloque del Canvas | Contribución al objetivo de negocio |
 |---|---|---|---|
 | P1 | Anomalías por cuenta + calibración de confianza | 4-A/B/C · 5 | Score de confianza para decidir bloqueo/revisión/paso |
-| P2 | Clasificación supervisada (validación cruzada) | 4-C (validación) · 5 | Confirmar que las señales de anomalía generalizan |
+| P2 | Clasificación supervisada (validación cruzada) | 4-C (validación) · 5 | Comprobar que la forma de detectar y medir     la   confianza funciona tanto en datos simulados como en fraude real |
 | P3 | Análisis costo-sensible | 2 · 5 | Política operativa de tres niveles |
 | P4 | Validación temporal / concept drift | 3 (riesgos) · 6 | Sostenibilidad del modelo en producción |
